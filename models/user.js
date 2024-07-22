@@ -13,6 +13,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
    
+    },governmentName:{
+        type:String,
+        required: true,
+    },
+    referrer: {
+        referralUsername: {
+            type: String,
+        
+        },
+        used: {
+            type: Boolean,
+            default: false,
+        },
     },
     password: {
         type: String,

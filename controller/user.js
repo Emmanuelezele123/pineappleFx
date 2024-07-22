@@ -5,8 +5,9 @@ const generateToken = require("../util/token")
 
 exports.registerUser = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-
+        const { username, email, password,governmentName,referrer } = req.body;
+      
+       
        
         const existingUsername = await User.findOne({ username });
         if (existingUsername) {
@@ -19,7 +20,18 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Email already exists' });
         }
 
-        const newUser = new User({ username, email, password });
+
+        if (referrer) {
+            const referrerUser = await User.findOne({ username: referrer });
+            if (!referrerUser) {
+                return res.status(400).json({ message: "Referral Username does not exist" });
+            }
+        }
+     
+        const newUser = new User({ username, email, password,  referrer: {
+            referralUsername: referrer || "", // Default to an empty string if not provided
+            used: false,
+        }, governmentName });
         await newUser.save();
 
         const token = generateToken(newUser);

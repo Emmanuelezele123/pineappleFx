@@ -7,7 +7,7 @@ const userRoutes = require("./routes/user");
 const walletRoutes = require("./routes/pinewallet")
 const transactionRoutes = require("./routes/transaction")
 const tradeRoutes = require("./routes/trade")
-
+const adminRoutes = require("./routes/admin")
 
 const port = process.env.PORT || 3000;
 
@@ -25,6 +25,7 @@ app.use(cors({
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/pinewallet",walletRoutes);
+app.use("/api/v1/admin",adminRoutes);
 app.use("/api/v1/transaction",transactionRoutes);
 app.use("/api/v1/trade",tradeRoutes);
 app.listen(port, async() => {
