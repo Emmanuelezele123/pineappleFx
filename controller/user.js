@@ -5,7 +5,7 @@ const generateToken = require("../util/token")
 
 exports.registerUser = async (req, res) => {
     try {
-        const { username, email, password,governmentName,referrer } = req.body;
+        let { username, email, password,governmentName,referrer } = req.body;
       
        
        
@@ -28,10 +28,14 @@ exports.registerUser = async (req, res) => {
             }
         }
      
-        const newUser = new User({ username, email, password,  referrer: {
-            referralUsername: referrer || "", // Default to an empty string if not provided
-            used: false,
-        }, governmentName });
+        const count = await User.countDocuments({ referrer: referrer});
+        if (count <= 40 ) {
+          console.log("You have used "+count+"/40 referrals before now")
+        }else{
+            referrer = ""
+        }
+
+        const newUser = new User({ username, email, password ,referrer,governmentName });
         await newUser.save();
 
         const token = generateToken(newUser);

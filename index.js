@@ -8,6 +8,7 @@ const walletRoutes = require("./routes/pinewallet")
 const transactionRoutes = require("./routes/transaction")
 const tradeRoutes = require("./routes/trade")
 const adminRoutes = require("./routes/admin")
+const schedulePineWalletUpdate = require('./scheduler');
 
 const port = process.env.PORT || 3000;
 
@@ -31,6 +32,7 @@ app.use("/api/v1/trade",tradeRoutes);
 app.listen(port, async() => {
   connectDb();
   console.log(`Server listening on port ${port}`);
-  
+  // Start the scheduler
+  schedulePineWalletUpdate();
   
 });

@@ -17,15 +17,8 @@ const userSchema = new mongoose.Schema({
         type:String,
         required: true,
     },
-    referrer: {
-        referralUsername: {
-            type: String,
-        
-        },
-        used: {
-            type: Boolean,
-            default: false,
-        },
+        referrer: {
+            type: String,   
     },
     password: {
         type: String,
@@ -42,6 +35,8 @@ const userSchema = new mongoose.Schema({
     referralEarning: {
         type: Number,
         default: 0
+    },blocked:{
+        
     }
 }, { timestamps: true });
 

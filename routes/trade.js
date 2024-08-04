@@ -4,7 +4,7 @@ const auth = require("../middleware/token");
 const {createTrade,pendingTrade} = require("../controller/trade");
 
 // Register route
-router.post("/createTrade",auth, createTrade);
+//router.post("/createTrade",auth, createTrade);
 router.get("/getPendingTrade",auth, pendingTrade);
 
 
