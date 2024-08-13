@@ -32,7 +32,7 @@ app.use("/api/v1/trade",tradeRoutes);
 app.listen(port, async() => {
   connectDb();
   console.log(`Server listening on port ${port}`);
-  // Start the scheduler
+  // Start  the scheduler
   schedulePineWalletUpdate();
   
 });
