@@ -5,8 +5,6 @@ const Transaction = require("../models/transaction");
 exports.createTradeForUser = async (userId) => {
     try {
 
-  
-      // If no pending trades or trades within the last 30 days, proceed to create a new trade
       const user = await User.findById(userId);
       if (!user) {
         console.log(`User ${userId} not found.`);
@@ -41,12 +39,6 @@ exports.createTradeForUser = async (userId) => {
   
       await newTransaction.save();
   
-      const referralUser = await User.find({referrer:user.referrer});
-      if (!referralUser) {
-        console.log("User not found.");
-      }
-      
-
 
       console.log(`Trade created successfully for user ${userId}`);
     } catch (error) {
@@ -73,16 +65,20 @@ exports.createTradeForUser = async (userId) => {
             const user = await User.findById(userId);
             if (!user) {
                 console.log(`User ${userId} not found.`);
-                return;
+                return;  
             }
-    
+   
             // Update the user's pineWallet with the trade returns
             user.pineWallet += trade.returns;
+         
+        
             await user.save();
     
             // Update the trade status to Completed
             trade.status = "Completed";
             await trade.save();
+
+          
     
             // Create a transaction record for the trade returns
             const newTransaction = new Transaction({
@@ -91,7 +87,6 @@ exports.createTradeForUser = async (userId) => {
                 amount: trade.returns,
                 description: `Your pineWallet received returns of ${trade.returns}`
             });
-    
             await newTransaction.save();
     
             console.log(`Trade for user ${userId} completed successfully and user's pineWallet updated to ${user.pineWallet}`);
