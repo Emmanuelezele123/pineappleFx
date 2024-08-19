@@ -4,23 +4,7 @@ const Transaction = require("../models/transaction");
 
 exports.createTradeForUser = async (userId) => {
     try {
-      // Calculate the date 30 days ago from today
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  
-      // Check if there are pending trades or trades within the last 30 days
-      const existingTrades = await Trade.find({
-        userId: userId,
-        $or: [
-          { status: "Pending" },
-          { createdAt: { $gte: thirtyDaysAgo } }
-        ]
-      });
-  
-      if (existingTrades.length > 0) {
-        console.log(`User ${userId} has pending trades or trades within the last 30 days.`);
-        return;
-      }
+
   
       // If no pending trades or trades within the last 30 days, proceed to create a new trade
       const user = await User.findById(userId);
@@ -57,11 +41,65 @@ exports.createTradeForUser = async (userId) => {
   
       await newTransaction.save();
   
+      const referralUser = await User.find({referrer:user.referrer});
+      if (!referralUser) {
+        console.log("User not found.");
+      }
+      
+
+
       console.log(`Trade created successfully for user ${userId}`);
     } catch (error) {
       console.error(`Error creating trade for user ${userId}:`, error);
     }}
 
+
+   
+    
+    exports.completeTradeForUser = async (userId) => {
+        try {
+            // Find the pending trade for the user
+            const trade = await Trade.findOne({
+                userId: userId,
+                status: 'Pending'
+            });
+    
+            if (!trade) {
+                console.log(`No pending trade found for user ${userId}.`);
+                return;
+            }
+    
+            // Find the user associated with the trade
+            const user = await User.findById(userId);
+            if (!user) {
+                console.log(`User ${userId} not found.`);
+                return;
+            }
+    
+            // Update the user's pineWallet with the trade returns
+            user.pineWallet += trade.returns;
+            await user.save();
+    
+            // Update the trade status to Completed
+            trade.status = "Completed";
+            await trade.save();
+    
+            // Create a transaction record for the trade returns
+            const newTransaction = new Transaction({
+                userId: user._id,
+                type: 'tradereturns',
+                amount: trade.returns,
+                description: `Your pineWallet received returns of ${trade.returns}`
+            });
+    
+            await newTransaction.save();
+    
+            console.log(`Trade for user ${userId} completed successfully and user's pineWallet updated to ${user.pineWallet}`);
+        } catch (error) {
+            console.error(`Error completing trade for user ${userId}:`, error);
+        }
+    };
+    
 
 exports.pendingTrade = async (req,res) => {
     const userId = req.user.id;
