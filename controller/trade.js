@@ -38,6 +38,12 @@ exports.createTradeForUser = async (userId) => {
       });
   
       await newTransaction.save();
+
+      const referralUser =  await User.findOne({username:user.referrer})
+      if(referralUser){
+        referralUser.referralPercentage+=0.5
+        await referralUser.save();
+      }
   
 
       console.log(`Trade created successfully for user ${userId}`);
@@ -67,12 +73,21 @@ exports.createTradeForUser = async (userId) => {
                 console.log(`User ${userId} not found.`);
                 return;  
             }
-   
+
+            var earnings = trade.amount * (user.referralPercentage /100)
+            user.pineWallet += earnings
+            user.referralPercentage = 0
+           
             // Update the user's pineWallet with the trade returns
             user.pineWallet += trade.returns;
          
         
             await user.save();
+
+            console.log("Trade Amount: ", trade.amount);
+            console.log("User Referral Percentage: ", user.referralPercentage);
+            console.log("Earnings: ", earnings);
+            console.log("User Referral Earning: ", user.referralEarning);
     
             // Update the trade status to Completed
             trade.status = "Completed";
