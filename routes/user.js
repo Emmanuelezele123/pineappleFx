@@ -12,7 +12,6 @@ router.post("/login", loginUser);
 // Get user details route
 router.get("/getUser", auth, getUser);
 
-// Get user details route
 router.get("/getTopUsers", getTopUsers);
 
 module.exports = router;
