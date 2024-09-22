@@ -78,3 +78,47 @@ exports.getUser = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
+
+
+
+exports.getTopUsers = async (req, res) => {
+    try {
+        // Aggregate users and compute the combined sum of pineVest and pineWallet
+        const topUsers = await User.aggregate([
+            {
+                $addFields: {
+                    totalBalance: { $sum: ["$pineVest", "$pineWallet"] } // Combine pineVest and pineWallet
+                }
+            },
+            {
+                $sort: { totalBalance: -1 } // Sort by totalBalance in descending order
+            },
+            {
+                $limit: 10 // Limit the result to 10 users
+            },
+            {
+                $project: {
+                    username: 1,
+                    email: 1,
+                    pineWallet: 1,
+                    pineVest: 1,
+                    totalBalance: 1 // Return total balance
+                }
+            }
+        ]);
+
+        // Send the response
+        res.status(200).json({
+            success: true,
+            count: topUsers.length,
+            data: topUsers
+        });
+    } catch (error) {
+        console.error("Error fetching top users:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch top users"
+        });
+    }
+};

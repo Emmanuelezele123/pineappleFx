@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/token");
-const { registerUser, loginUser,getUser } = require("../controller/user");
+const { registerUser, loginUser,getUser,getTopUsers } = require("../controller/user");
 
 // Register route
 router.post("/register", registerUser);
@@ -11,5 +11,8 @@ router.post("/login", loginUser);
 
 // Get user details route
 router.get("/getUser", auth, getUser);
+
+// Get user details route
+router.get("/getTopUsers", getTopUsers);
 
 module.exports = router;
