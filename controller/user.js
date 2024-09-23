@@ -122,3 +122,29 @@ exports.getTopUsers = async (req, res) => {
         });
     }
 };
+
+
+
+// Controller to get referral count by username
+exports.getReferralCount = async (req, res) => {
+    try {
+        const { username } = req.params;
+
+        // Check if user exists
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Count the users who have this user as a referrer
+        const referralCount = await User.countDocuments({ referrer: username });
+
+        return res.status(200).json({
+            message: `Referral count for ${username}`,
+            referralCount: referralCount
+        });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
