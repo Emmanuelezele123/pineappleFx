@@ -5,6 +5,7 @@ const app = express();
 const connectDb = require('./config/database');
 const userRoutes = require("./routes/user");
 const walletRoutes = require("./routes/pinewallet")
+const vestRoutes = require("./routes/pinevest")
 const transactionRoutes = require("./routes/transaction")
 const tradeRoutes = require("./routes/trade")
 const adminRoutes = require("./routes/admin")
@@ -26,6 +27,7 @@ app.use(cors({
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/pinewallet",walletRoutes);
+app.use("/api/v1/pinevest",vestRoutes);
 app.use("/api/v1/admin",adminRoutes);
 app.use("/api/v1/transaction",transactionRoutes);
 app.use("/api/v1/trade",tradeRoutes);
