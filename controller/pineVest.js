@@ -15,7 +15,7 @@ exports.transferMoney = async (req, res) => {
         }
 
         // Transfer logic from pineWallet to pineVest
-        if (user.pineWallet < amount) {
+        if (user.pineVest < amount) {
             return res.status(400).json({ message: 'Insufficient funds' });
         }
 
