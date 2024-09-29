@@ -14,7 +14,7 @@ router.get("/getUser", auth, getUser);
 
 router.get("/getTopUsers", getTopUsers);
 
-router.get("/updateBankAccount",updateBankAccount);
+router.get("/updateBankAccount",auth,updateBankAccount);
 
 
 router.get("/getReferralCount/:username", getReferralCount);
