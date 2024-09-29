@@ -1,24 +1,23 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const bcrypt =require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv").config();
 
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-       
     },
     email: {
         type: String,
         required: true,
-   
-    },governmentName:{
-        type:String,
+    },
+    governmentName: {
+        type: String,
         required: true,
     },
-        referrer: {
-            type: String,   
+    referrer: {
+        type: String,
     },
     password: {
         type: String,
@@ -32,15 +31,34 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    referralPercentage:{
+    referralPercentage: {
         type: Number,
         default: 0
     },
     referralEarning: {
         type: Number,
         default: 0
-    },blocked:{
-        
+    },
+    blocked: {
+        type: Boolean,
+        default: false
+    },
+    bankAccountDetails: {
+        bankName: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        accountNumber: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        accountName: {
+            type: String,
+            required: false,
+            default: ''
+        }
     }
 }, { timestamps: true });
 

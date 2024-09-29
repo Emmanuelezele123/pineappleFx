@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/token");
-const { registerUser, loginUser,getUser,getTopUsers, getReferralCount } = require("../controller/user");
+const { registerUser, loginUser,getUser,getTopUsers, getReferralCount,updateBankAccount } = require("../controller/user");
 
 // Register route
 router.post("/register", registerUser);
@@ -13,6 +13,9 @@ router.post("/login", loginUser);
 router.get("/getUser", auth, getUser);
 
 router.get("/getTopUsers", getTopUsers);
+
+router.get("/updateBankAccount",updateBankAccount);
+
 
 router.get("/getReferralCount/:username", getReferralCount);
 

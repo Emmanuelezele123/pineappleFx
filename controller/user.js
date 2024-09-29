@@ -80,6 +80,30 @@ exports.getUser = async (req, res) => {
 };
 
 
+exports.updateBankAccount = async (req, res) => {
+    try {
+        const { bankName, accountNumber, accountName } = req.body;
+
+        // Check if all fields are provided
+        if (!bankName || !accountNumber || !accountName) {
+            return res.status(400).json({ message: "Please provide all required bank account details." });
+        }
+
+        // Update the bank account details
+        req.user.bankAccountDetails = {
+            bankName,
+            accountNumber,
+            accountName
+        };
+
+        // Save the updated user
+        await req.user.save();
+
+        res.status(200).json({ message: "Bank account details updated successfully", bankAccountDetails: req.user.bankAccountDetails });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
 
 
 exports.getTopUsers = async (req, res) => {
