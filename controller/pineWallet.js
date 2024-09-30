@@ -68,6 +68,71 @@ exports.withdraw = async (req, res) => {
 
 
 
+exports.adminDeposit = async (req, res) => {
+    let { amount, username } = req.body;
+    amount = Number(amount);
+
+    try {
+        let user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Deposit logic
+        user.pineWallet += amount;
+        await user.save();
+
+        // Create transaction record
+        const transaction = new Transaction({
+            userId: user._id,
+            type: 'pinedeposit',
+            amount,
+            description: 'Deposit to pineWallet'
+        });
+        await transaction.save();
+
+        res.json({ message: 'Deposit successful', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+exports.adminWithdraw = async (req, res) => {
+    let { amount, username } = req.body;
+    amount = Number(amount);
+
+    try {
+        let user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Withdrawal logic
+        if (user.pineWallet < amount) {
+            return res.status(400).json({ message: 'Insufficient funds' });
+        }
+        user.pineWallet -= amount;
+        await user.save();
+
+        // Create transaction record
+        const transaction = new Transaction({
+            userId: user._id,
+            type: 'pinewithdrawal',
+            amount,
+            description: 'Withdrawal from pineWallet'
+        });
+        await transaction.save();
+
+        res.json({ message: ' withdrawal successful', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+
+
 exports.transferMoney = async (req, res) => {
     let { amount } = req.body;
     amount = Number(amount);
