@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const bcrypt =require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const generateToken = require("../util/token")
 
 
@@ -50,24 +50,62 @@ exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
 
- 
+        // Find user
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
-    
+        // Compare passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
-    
         const token = generateToken(user);
-
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { userId, newPassword } = req.body;
+
+        // Debug log
+        console.log("Starting password change for userId:", userId);
+
+        // Validate input
+        if (!userId || !newPassword) {
+            return res.status(400).json({ message: "User ID and new password are required." });
+        }
+
+        // Find user by ID
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Hash the new password directly (bypass pre-save hook)
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        
+        // Update password using updateOne to bypass the pre-save middleware
+        await User.updateOne(
+            { _id: userId },
+            { $set: { password: hashedPassword } }
+        );
+
+        console.log("Password updated successfully for user:", user.username);
+
+        res.status(200).json({ message: "Password changed successfully." });
+    } catch (error) {
+        console.error("Error in changePassword:", error);
+        res.status(500).json({ 
+            message: "Internal server error.", 
+            error: error.message 
+        });
     }
 };
 
@@ -104,6 +142,9 @@ exports.updateBankAccount = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
+
+
 
 
 exports.getTopUsers = async (req, res) => {
