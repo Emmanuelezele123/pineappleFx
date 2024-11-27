@@ -35,6 +35,6 @@ app.listen(port, async() => {
   connectDb();
   console.log(`Server listening on port ${port}`);
   // Start  the scheduler
-  tradeSchedule();
+  //tradeSchedule();
   
 });

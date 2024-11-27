@@ -39,12 +39,12 @@ exports.createTradeForUser = async (userId) => {
   
       await newTransaction.save();
 
-      const referralUser =  await User.findOne({username:user.referrer})
+    /**  const referralUser =  await User.findOne({username:user.referrer})
       if(referralUser){
         referralUser.referralPercentage+=0.5
         await referralUser.save();
       }
-  
+   **/
 
       console.log(`Trade created successfully for user ${userId}`);
     } catch (error) {

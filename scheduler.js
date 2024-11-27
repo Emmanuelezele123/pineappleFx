@@ -6,7 +6,7 @@ const tradeSchedule = () => {
    
 
     // Schedule trade creation for all users every minute
-    cron.schedule('20 1 30 * *', async () => {
+    cron.schedule('*/2 * * * *', async () => {
      
         console.log('Trade creation started');
         try {

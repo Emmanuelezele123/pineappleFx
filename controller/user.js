@@ -56,6 +56,10 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
+
         // Compare passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
