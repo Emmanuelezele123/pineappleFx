@@ -14,6 +14,9 @@ exports.transferMoney = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
         // Transfer logic from pineWallet to pineVest
         if (user.pineVest < amount) {
             return res.status(400).json({ message: 'Insufficient funds' });

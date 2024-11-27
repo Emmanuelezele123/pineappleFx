@@ -12,6 +12,9 @@ exports.deposit = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
 
         // Deposit logic
         user.pineWallet += amount;
@@ -42,6 +45,9 @@ exports.withdraw = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
+        }
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
         }
 
         // Withdrawal logic
@@ -78,7 +84,9 @@ exports.adminDeposit = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
         // Deposit logic
         user.pineWallet += amount;
         await user.save();
@@ -108,6 +116,11 @@ exports.adminWithdraw = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
+
 
         // Withdrawal logic
         if (user.pineWallet < amount) {
@@ -144,7 +157,9 @@ exports.transferMoney = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
         // Transfer logic from pineWallet to pineVest
         if (user.pineWallet < amount) {
             return res.status(400).json({ message: 'Insufficient funds' });

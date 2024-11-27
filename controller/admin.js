@@ -140,3 +140,84 @@ exports.getAllTransactions = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+exports.toggleBlockUser = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        user.blocked = !user.blocked;
+        await user.save();
+
+        res.status(200).json({ 
+            message: `User ${user.blocked ? 'blocked' : 'unblocked'} successfully`, 
+            blocked: user.blocked 
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Error toggling block status", error: error.message });
+    }
+};
+exports.depositToUser = async (req, res) => {
+    try {
+
+        const { amount,userId  } = req.body;
+
+        if (amount <= 0) {
+            return res.status(400).json({ message: "Deposit amount must be greater than zero" });
+        }
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
+
+        user.pineWallet += amount;
+        await user.save();
+
+        res.status(200).json({ message: "Deposit successful", pineWallet: user.pineWallet });
+    } catch (error) {
+        res.status(500).json({ message: "Error depositing to user", error: error.message });
+    }
+};
+
+exports.withdrawFromUser = async (req, res) => {
+    try {
+        const { amount,userId } = req.body;
+
+        if (amount <= 0) {
+            return res.status(400).json({ message: "Withdrawal amount must be greater than zero" });
+        }
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        
+        if(user.blocked) {
+            return res.status(400).json({ message: 'You have been banned....Contact the admin' });
+        }
+
+        if (user.pineWallet < amount) {
+            return res.status(400).json({ message: "Insufficient balance in pineWallet" });
+        }
+
+        user.pineWallet -= amount;
+        await user.save();
+
+        res.status(200).json({ message: "Withdrawal successful", pineWallet: user.pineWallet });
+    } catch (error) {
+        res.status(500).json({ message: "Error withdrawing from user", error: error.message });
+    }
+};
