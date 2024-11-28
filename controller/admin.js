@@ -183,6 +183,14 @@ exports.depositToUser = async (req, res) => {
 
         user.pineWallet += amount;
         await user.save();
+          // Create transaction record
+          const transaction = new Transaction({
+            userId: user._id,
+            type: 'pinedeposit',
+            amount,
+            description: 'Deposit to pineWallet'
+        });
+        await transaction.save();
 
         res.status(200).json({ message: "Deposit successful", pineWallet: user.pineWallet });
     } catch (error) {
@@ -216,6 +224,16 @@ exports.withdrawFromUser = async (req, res) => {
         user.pineWallet -= amount;
         await user.save();
 
+        
+        // Create transaction record
+        const transaction = new Transaction({
+            userId: user._id,
+            type: 'pinewithdrawal',
+            amount,
+            description: 'Withdrawal from pineWallet'
+        });
+        await transaction.save();
+        
         res.status(200).json({ message: "Withdrawal successful", pineWallet: user.pineWallet });
     } catch (error) {
         res.status(500).json({ message: "Error withdrawing from user", error: error.message });
